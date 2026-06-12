@@ -205,6 +205,8 @@
     border-color: var(--accent);
   }
 
+  .sort-chips { display: none; }
+
   /* ---------- Table ---------- */
 
   .table-wrap {
@@ -238,18 +240,20 @@
 
   thead th.num { text-align: right; }
 
-  thead th .arrow {
+  .arrow {
     display: inline-block;
     margin-left: 4px;
     opacity: 0;
     color: var(--accent);
   }
 
-  thead th.sort-asc .arrow,
-  thead th.sort-desc .arrow { opacity: 1; }
+  .sort-asc .arrow,
+  .sort-desc .arrow { opacity: 1; }
 
-  thead th.sort-asc .arrow::after { content: '▲'; }
-  thead th.sort-desc .arrow::after { content: '▼'; }
+  .sort-asc .arrow::after { content: '▲'; }
+  .sort-desc .arrow::after { content: '▼'; }
+
+  thead th.sort-asc, thead th.sort-desc { color: var(--text); }
 
   tbody tr {
     border-left: 4px solid transparent;
@@ -353,6 +357,53 @@
     table, tbody, tr { display: block; width: 100%; }
 
     td:not(.mobile-card) { display: none; }
+
+    .sort-chips {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: -10px 0 16px;
+    }
+
+    .sort-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      flex: 0 0 auto;
+      padding-top: 6px;
+    }
+
+    .sort-chips-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .sort-chip {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 999px;
+      padding: 5px 12px;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s, background 0.15s;
+    }
+
+    .sort-chip:hover { color: var(--text); border-color: var(--accent); }
+
+    .sort-chip.active {
+      color: var(--bg);
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .sort-chip.active .arrow { color: var(--bg); }
 
     tbody tr {
       border: 1px solid var(--border);
@@ -467,6 +518,11 @@
     <div class="venue-filters" id="venueFilters"></div>
   </div>
 
+  <div class="sort-chips">
+    <span class="sort-label">Sort</span>
+    <div class="sort-chips-row" id="sortChips"></div>
+  </div>
+
   <div class="table-wrap">
     <table id="menuTable">
       <thead>
@@ -564,11 +620,41 @@
   }
 
   function updateSortIndicators() {
-    document.querySelectorAll('th[data-key]').forEach(th => {
-      th.classList.remove('sort-asc', 'sort-desc');
-      if (th.dataset.key === state.sortKey) {
-        th.classList.add(state.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+    document.querySelectorAll('th[data-key], .sort-chip').forEach(el => {
+      el.classList.remove('sort-asc', 'sort-desc', 'active');
+      if (el.dataset.key === state.sortKey) {
+        el.classList.add(state.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+        if (el.classList.contains('sort-chip')) el.classList.add('active');
       }
+    });
+  }
+
+  function setSort(key) {
+    if (state.sortKey === key) {
+      state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+      state.sortKey = key;
+      state.sortDir = (NUMERIC_COLS.has(key) || key === 'servings_prices') ? 'desc' : 'asc';
+    }
+    updateSortIndicators();
+    applyAndRender();
+  }
+
+  const SORT_CHIP_OPTIONS = [
+    { key: 'beer_name', label: 'Beer' },
+    { key: 'abv', label: 'ABV' },
+    { key: 'ibu', label: 'IBU' },
+    { key: 'rating', label: '★ Rating' },
+    { key: 'servings_prices', label: '€ Price' },
+  ];
+
+  function buildSortChips() {
+    const container = document.getElementById('sortChips');
+    container.innerHTML = SORT_CHIP_OPTIONS.map(opt =>
+      `<button type="button" class="sort-chip" data-key="${opt.key}">${opt.label}<span class="arrow"></span></button>`
+    ).join('');
+    container.querySelectorAll('.sort-chip').forEach(btn => {
+      btn.addEventListener('click', () => setSort(btn.dataset.key));
     });
   }
 
@@ -773,18 +859,10 @@
     });
 
     document.querySelectorAll('th[data-key]').forEach(th => {
-      th.addEventListener('click', () => {
-        const key = th.dataset.key;
-        if (state.sortKey === key) {
-          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
-        } else {
-          state.sortKey = key;
-          state.sortDir = NUMERIC_COLS.has(key) ? 'desc' : 'asc';
-        }
-        updateSortIndicators();
-        applyAndRender();
-      });
+      th.addEventListener('click', () => setSort(th.dataset.key));
     });
+
+    buildSortChips();
 
     // Кнопка "Refresh" просто перечитывает уже собранный
     // output/current_menu.json (статический файл, обновляемый раз в час
