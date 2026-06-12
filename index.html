@@ -317,6 +317,8 @@
 
   .dash { color: var(--text-muted); }
 
+  td.mobile-card { display: none; }
+
   /* ---------- Empty / error states ---------- */
 
   .empty, .error {
@@ -348,41 +350,96 @@
   @media (max-width: 760px) {
     thead { display: none; }
 
-    table, tbody, tr, td { display: block; width: 100%; }
+    table, tbody, tr { display: block; width: 100%; }
+
+    td:not(.mobile-card) { display: none; }
 
     tbody tr {
       border: 1px solid var(--border);
-      border-left: 4px solid transparent;
+      border-left: 3px solid transparent;
       border-radius: var(--radius);
-      margin-bottom: 10px;
-      padding: 4px 0;
+      margin-bottom: 8px;
     }
 
-    td {
+    td.mobile-card {
+      display: block;
+      padding: 10px 12px;
+    }
+
+    .mc-head {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      padding: 6px 14px;
-      border-bottom: none;
+      gap: 10px;
+      margin-bottom: 4px;
     }
 
-    td.num, td.price { text-align: right; }
+    .mc-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
 
-    td::before {
-      content: attr(data-label);
+    .mc-tags .badge { flex: 0 0 auto; }
+
+    .mc-tap {
+      flex: 1 1 auto;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       font-family: var(--font-mono);
       font-size: 0.68rem;
       text-transform: uppercase;
-      letter-spacing: 0.06em;
+      letter-spacing: 0.05em;
       color: var(--text-muted);
-      flex: 0 0 auto;
-      padding-top: 2px;
     }
 
-    td.beer-cell { flex-direction: column; gap: 2px; }
-    td.beer-cell::before { display: none; }
-    td.beer-cell .name { font-size: 1.05rem; }
+    .mc-link {
+      flex: 0 0 auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+      text-decoration: none;
+      padding-left: 4px;
+    }
+
+    .mc-name {
+      font-weight: 600;
+      font-size: 1.02rem;
+      line-height: 1.35;
+      margin-bottom: 2px;
+    }
+
+    .mc-meta {
+      color: var(--text-muted);
+      font-size: 0.83rem;
+      line-height: 1.4;
+      margin-bottom: 6px;
+    }
+
+    .mc-meta .brewery-link { color: var(--text-muted); }
+
+    .mc-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .mc-stat b { color: var(--text); font-weight: 700; }
+
+    .mc-price {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--accent);
+    }
   }
 </style>
 </head>
@@ -545,6 +602,41 @@
     return cell(escapeHtml(raw), label, 'num');
   }
 
+  function mobileCard(it, vColor) {
+    const tags = `<span class="badge" style="--badge-color:${vColor}">${escapeHtml(it.venue)}</span>` +
+      (it.category ? `<span class="mc-tap">${escapeHtml(it.category)}</span>` : '');
+
+    const metaParts = [];
+    if (it.style) metaParts.push(escapeHtml(it.style));
+    if (it.brewery) {
+      metaParts.push(it.brewery_url
+        ? `<a class="brewery-link" href="${escapeHtml(it.brewery_url)}" target="_blank" rel="noopener">${escapeHtml(it.brewery)}</a>`
+        : escapeHtml(it.brewery));
+    }
+    const meta = metaParts.length ? `<div class="mc-meta">${metaParts.join(' · ')}</div>` : '';
+
+    const stats = [];
+    stats.push(`<span class="mc-stat"><b>${isNA(it.abv) ? '–' : escapeHtml(it.abv)}</b> ABV</span>`);
+    if (!isNA(it.ibu)) stats.push(`<span class="mc-stat"><b>${escapeHtml(it.ibu)}</b> IBU</span>`);
+    if (!isNA(it.rating)) stats.push(`<span class="mc-stat">★ ${escapeHtml(it.rating)}</span>`);
+
+    const price = it.servings_prices
+      ? `<div class="mc-price">${escapeHtml(it.servings_prices).replace(/;\s*/g, ' · ')}</div>`
+      : '';
+
+    const link = it.beer_url
+      ? `<a class="mc-link" href="${escapeHtml(it.beer_url)}" target="_blank" rel="noopener" aria-label="Open on Untappd">↗</a>`
+      : '';
+
+    return `<td class="mobile-card">` +
+      `<div class="mc-head"><div class="mc-tags">${tags}</div>${link}</div>` +
+      `<div class="mc-name">${escapeHtml(it.beer_name || '')}</div>` +
+      meta +
+      `<div class="mc-stats">${stats.join('')}</div>` +
+      price +
+      `</td>`;
+  }
+
   function renderRows(items) {
     const tbody = document.getElementById('menuBody');
     const emptyState = document.getElementById('emptyState');
@@ -591,6 +683,7 @@
         venueCell + beerCell + styleCell + breweryCell +
         numericCell(it.abv, 'ABV') + numericCell(it.ibu, 'IBU') + numericCell(it.rating, 'Rating') +
         priceCell + linkCell +
+        mobileCard(it, vColor) +
         `</tr>`;
     }).join('');
   }
