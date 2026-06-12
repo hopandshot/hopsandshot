@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>On Tap — Valencia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Space+Mono:wght@400;700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #1a1612;
+    --surface: #221c17;
+    --surface-2: #2b231d;
+    --border: #3a322a;
+    --text: #f2ebdd;
+    --text-muted: #a89a89;
+    --accent: #e0a458;
+    --accent-2: #6e9b5e;
+    --radius: 10px;
+    --font-display: 'Space Grotesk', sans-serif;
+    --font-body: 'Archivo', sans-serif;
+    --font-mono: 'Space Mono', monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  html { color-scheme: dark; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-body);
+    line-height: 1.5;
+    padding: 32px 20px 64px;
+  }
+
+  .wrap {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* ---------- Header ---------- */
+
+  .hero {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 16px;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 6vw, 3.2rem);
+    letter-spacing: 0.01em;
+    margin: 0 0 6px;
+    line-height: 1.05;
+  }
+
+  .hero h1 .slash { color: var(--accent); }
+
+  .hero p.subtitle {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    max-width: 46ch;
+  }
+
+  .status-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    white-space: nowrap;
+  }
+
+  .refresh-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 6px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s;
+  }
+
+  .refresh-btn:hover:not(:disabled) {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .refresh-btn:disabled {
+    cursor: default;
+    opacity: 0.6;
+  }
+
+  .refresh-icon {
+    flex: 0 0 auto;
+  }
+
+  .refresh-btn.spinning .refresh-icon {
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .status .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent-2);
+    box-shadow: 0 0 0 0 rgba(110, 155, 94, 0.6);
+    animation: pulse 2.4s infinite;
+  }
+
+  .status.stale .dot { background: var(--accent); }
+  .status.error .dot { background: #c4564a; animation: none; }
+
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(110, 155, 94, 0.45); }
+    70%  { box-shadow: 0 0 0 6px rgba(110, 155, 94, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(110, 155, 94, 0); }
+  }
+
+  /* ---------- Controls ---------- */
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  #search {
+    flex: 1 1 240px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+  }
+
+  #search:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+
+  #search::placeholder { color: var(--text-muted); }
+
+  .venue-filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+  }
+
+  .chip:hover { color: var(--text); border-color: var(--accent); }
+
+  .chip.active {
+    color: var(--bg);
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  /* ---------- Table ---------- */
+
+  .table-wrap {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--surface);
+  }
+
+  thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+  }
+
+  thead th:hover { color: var(--text); }
+
+  thead th.num { text-align: right; }
+
+  thead th .arrow {
+    display: inline-block;
+    margin-left: 4px;
+    opacity: 0;
+    color: var(--accent);
+  }
+
+  thead th.sort-asc .arrow,
+  thead th.sort-desc .arrow { opacity: 1; }
+
+  thead th.sort-asc .arrow::after { content: '▲'; }
+  thead th.sort-desc .arrow::after { content: '▼'; }
+
+  tbody tr {
+    border-left: 4px solid transparent;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.1s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody tr:hover { background: var(--surface-2); }
+
+  td {
+    padding: 12px 14px;
+    vertical-align: top;
+    font-size: 0.9rem;
+  }
+
+  td.num, td.price {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  td.beer-cell .name {
+    font-weight: 600;
+    display: block;
+  }
+
+  td.beer-cell .tap {
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .badge {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--badge-color) 22%, var(--surface));
+    color: var(--badge-color);
+    border: 1px solid color-mix(in srgb, var(--badge-color) 45%, transparent);
+    white-space: nowrap;
+  }
+
+  .brewery-link {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 1px dotted var(--text-muted);
+  }
+  .brewery-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  .ext-link {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--accent);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .ext-link:hover { text-decoration: underline; }
+
+  .dash { color: var(--text-muted); }
+
+  /* ---------- Empty / error states ---------- */
+
+  .empty, .error {
+    padding: 48px 16px;
+    text-align: center;
+    color: var(--text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+
+  .error { color: #e0a458; }
+
+  .hidden { display: none; }
+
+  /* ---------- Footer ---------- */
+
+  footer {
+    margin-top: 28px;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    text-align: center;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ---------- Responsive: cards on small screens ---------- */
+
+  @media (max-width: 760px) {
+    thead { display: none; }
+
+    table, tbody, tr, td { display: block; width: 100%; }
+
+    tbody tr {
+      border: 1px solid var(--border);
+      border-left: 4px solid transparent;
+      border-radius: var(--radius);
+      margin-bottom: 10px;
+      padding: 4px 0;
+    }
+
+    td {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 6px 14px;
+      border-bottom: none;
+    }
+
+    td.num, td.price { text-align: right; }
+
+    td::before {
+      content: attr(data-label);
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      flex: 0 0 auto;
+      padding-top: 2px;
+    }
+
+    td.beer-cell { flex-direction: column; gap: 2px; }
+    td.beer-cell::before { display: none; }
+    td.beer-cell .name { font-size: 1.05rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div>
+      <h1>ON TAP<span class="slash"> / </span>VALENCIA</h1>
+      <p class="subtitle">Live tap lists from Valencia's craft beer bars, pulled from Untappd and refreshed every hour.</p>
+    </div>
+    <div class="status-group">
+      <div class="status" id="status"><span class="dot"></span><span id="statusText">Loading…</span></div>
+      <button class="refresh-btn" id="refreshBtn" type="button" aria-label="Refresh data" title="Re-check for new data">
+        <svg class="refresh-icon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+          <path d="M13.5 8a5.5 5.5 0 1 1-1.65-3.93M13.5 2v3.5h-3.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Refresh
+      </button>
+    </div>
+  </header>
+
+  <div class="controls">
+    <input type="search" id="search" placeholder="Search beer, brewery, style…" aria-label="Search">
+    <div class="venue-filters" id="venueFilters"></div>
+  </div>
+
+  <div class="table-wrap">
+    <table id="menuTable">
+      <thead>
+        <tr>
+          <th data-key="venue">Venue</th>
+          <th data-key="beer_name">Beer</th>
+          <th data-key="style">Style</th>
+          <th data-key="brewery">Brewery</th>
+          <th data-key="abv" class="num">ABV<span class="arrow"></span></th>
+          <th data-key="ibu" class="num">IBU<span class="arrow"></span></th>
+          <th data-key="rating" class="num">Rating<span class="arrow"></span></th>
+          <th data-key="servings_prices">Price</th>
+          <th>Untappd</th>
+        </tr>
+      </thead>
+      <tbody id="menuBody"></tbody>
+    </table>
+    <div class="empty hidden" id="emptyState">Nothing matches that search. Try a different term or filter.</div>
+    <div class="error hidden" id="errorState">Couldn't load the menu data. Try refreshing the page in a minute.</div>
+  </div>
+
+  <footer>
+    <p>Data sourced from <a href="https://untappd.com" target="_blank" rel="noopener">Untappd</a> venue pages. Updated hourly · Click a column header to sort.</p>
+  </footer>
+
+</div>
+
+<script>
+  const VENUE_COLORS = ['#c9602c', '#5b7b9a', '#6e9b5e', '#9b6e9b', '#c9a227', '#3f8f8c', '#b5651d', '#7a8fa6'];
+  const NUMERIC_COLS = new Set(['abv', 'ibu', 'rating']);
+
+  const state = {
+    items: [],
+    venues: [],
+    sortKey: 'venue',
+    sortDir: 'asc',
+    search: '',
+    venue: 'all',
+  };
+
+  const venueColorMap = new Map();
+  function venueColor(name) {
+    if (!venueColorMap.has(name)) {
+      venueColorMap.set(name, VENUE_COLORS[venueColorMap.size % VENUE_COLORS.length]);
+    }
+    return venueColorMap.get(name);
+  }
+
+  function styleColor(style) {
+    const s = (style || '').toLowerCase();
+    if (/stout|porter|schwarz|black ipa|imperial stout/.test(s)) return '#3a2317';
+    if (/sour|gose|lambic|wild ale|fruit/.test(s)) return '#d97a9a';
+    if (/wheat|witbier|weiss|hefe|saison|farmhouse/.test(s)) return '#edda9a';
+    if (/ipa|pale ale|bitter|session/.test(s)) return '#e0a458';
+    if (/lager|pilsner|helles|kolsch|pils|golden/.test(s)) return '#f4d58d';
+    if (/amber|red ale|brown|bock|dunkel|altbier/.test(s)) return '#b5651d';
+    return '#9c9486';
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? '').replace(/[&<>"']/g, c => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    }[c]));
+  }
+
+  function isNA(val) {
+    return val == null || /^n\/?a$/i.test(String(val).trim());
+  }
+
+  function getSortValue(item, key) {
+    const raw = item[key];
+    if (NUMERIC_COLS.has(key)) {
+      if (isNA(raw)) return null;
+      const num = parseFloat(String(raw).replace('%', '').replace(',', '.'));
+      return isNaN(num) ? null : num;
+    }
+    if (key === 'servings_prices') {
+      if (!raw) return null;
+      const m = String(raw).match(/([\d.,]+)/);
+      return m ? parseFloat(m[1].replace(',', '.')) : null;
+    }
+    return (raw || '').toString().toLowerCase();
+  }
+
+  function compareItems(a, b, key, dir) {
+    const va = getSortValue(a, key);
+    const vb = getSortValue(b, key);
+    // missing values always sort to the end, regardless of direction
+    if (va === null && vb === null) return 0;
+    if (va === null) return 1;
+    if (vb === null) return -1;
+    if (va < vb) return dir === 'asc' ? -1 : 1;
+    if (va > vb) return dir === 'asc' ? 1 : -1;
+    return 0;
+  }
+
+  function updateSortIndicators() {
+    document.querySelectorAll('th[data-key]').forEach(th => {
+      th.classList.remove('sort-asc', 'sort-desc');
+      if (th.dataset.key === state.sortKey) {
+        th.classList.add(state.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+      }
+    });
+  }
+
+  function buildVenueFilters() {
+    const container = document.getElementById('venueFilters');
+    container.innerHTML = '';
+    const entries = [['all', 'All']].concat(state.venues.map(v => [v, v]));
+    entries.forEach(([value, label]) => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (value === state.venue ? ' active' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        state.venue = value;
+        applyAndRender();
+      });
+      container.appendChild(btn);
+    });
+  }
+
+  function cell(value, label, extraClass) {
+    const cls = extraClass ? ` class="${extraClass}"` : '';
+    return `<td data-label="${label}"${cls}>${value}</td>`;
+  }
+
+  function numericCell(raw, label) {
+    if (isNA(raw)) {
+      return cell('<span class="dash">–</span>', label, 'num');
+    }
+    return cell(escapeHtml(raw), label, 'num');
+  }
+
+  function renderRows(items) {
+    const tbody = document.getElementById('menuBody');
+    const emptyState = document.getElementById('emptyState');
+
+    if (items.length === 0) {
+      tbody.innerHTML = '';
+      emptyState.classList.remove('hidden');
+      return;
+    }
+    emptyState.classList.add('hidden');
+
+    tbody.innerHTML = items.map(it => {
+      const swatch = styleColor(it.style);
+      const vColor = venueColor(it.venue);
+
+      const venueCell = cell(
+        `<span class="badge" style="--badge-color:${vColor}">${escapeHtml(it.venue)}</span>` +
+        (it.category ? `<div class="tap" style="margin-top:4px;">${escapeHtml(it.category)}</div>` : ''),
+        'Venue'
+      );
+
+      const beerCell = cell(
+        `<span class="name">${escapeHtml(it.beer_name || '')}</span>`,
+        'Beer', 'beer-cell'
+      );
+
+      const styleCell = cell(escapeHtml(it.style) || '<span class="dash">–</span>', 'Style');
+
+      const breweryCell = cell(
+        it.brewery_url
+          ? `<a class="brewery-link" href="${escapeHtml(it.brewery_url)}" target="_blank" rel="noopener">${escapeHtml(it.brewery)}</a>`
+          : (escapeHtml(it.brewery) || '<span class="dash">–</span>'),
+        'Brewery'
+      );
+
+      const priceCell = cell(escapeHtml(it.servings_prices) || '<span class="dash">–</span>', 'Price', 'price');
+
+      const linkCell = cell(
+        it.beer_url ? `<a class="ext-link" href="${escapeHtml(it.beer_url)}" target="_blank" rel="noopener">Open ↗</a>` : '',
+        'Untappd'
+      );
+
+      return `<tr style="border-left-color:${swatch}">` +
+        venueCell + beerCell + styleCell + breweryCell +
+        numericCell(it.abv, 'ABV') + numericCell(it.ibu, 'IBU') + numericCell(it.rating, 'Rating') +
+        priceCell + linkCell +
+        `</tr>`;
+    }).join('');
+  }
+
+  function applyAndRender() {
+    const search = state.search.trim().toLowerCase();
+    let items = state.items.filter(it => {
+      if (state.venue !== 'all' && it.venue !== state.venue) return false;
+      if (search) {
+        const hay = [it.venue, it.beer_name, it.style, it.brewery, it.category, it.servings_prices]
+          .filter(Boolean).join(' ').toLowerCase();
+        if (!hay.includes(search)) return false;
+      }
+      return true;
+    });
+
+    items.sort((a, b) => {
+      const primary = compareItems(a, b, state.sortKey, state.sortDir);
+      if (primary !== 0) return primary;
+      return compareItems(a, b, 'beer_name', 'asc');
+    });
+
+    renderRows(items);
+  }
+
+  function formatStatus(generatedAtIso) {
+    const statusEl = document.getElementById('status');
+    const textEl = document.getElementById('statusText');
+    const d = new Date(generatedAtIso);
+    if (isNaN(d.getTime())) {
+      textEl.textContent = 'Last update: unknown';
+      return;
+    }
+    const diffMin = Math.round((Date.now() - d.getTime()) / 60000);
+    let rel;
+    if (diffMin < 1) rel = 'just now';
+    else if (diffMin === 1) rel = '1 min ago';
+    else if (diffMin < 60) rel = `${diffMin} min ago`;
+    else {
+      const h = Math.round(diffMin / 60);
+      rel = h === 1 ? '1 hour ago' : `${h} hours ago`;
+    }
+    textEl.textContent = `Updated ${rel}`;
+    statusEl.classList.toggle('stale', diffMin > 90);
+  }
+
+  async function loadData() {
+    const errorEl = document.getElementById('errorState');
+    const statusEl = document.getElementById('status');
+    errorEl.classList.add('hidden');
+
+    try {
+      const res = await fetch('./output/current_menu.json', { cache: 'no-store' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+
+      state.items = data.items || [];
+      const venues = data.venues && data.venues.length
+        ? data.venues
+        : [...new Set(state.items.map(i => i.venue))];
+
+      // если выбранное заведение исчезло из выгрузки, сбрасываем на "All"
+      if (state.venue !== 'all' && !venues.includes(state.venue)) {
+        state.venue = 'all';
+      }
+      state.venues = venues;
+
+      statusEl.classList.remove('error');
+      buildVenueFilters();
+      formatStatus(data.generated_at_utc);
+      updateSortIndicators();
+      applyAndRender();
+      return true;
+    } catch (err) {
+      errorEl.classList.remove('hidden');
+      statusEl.classList.add('error');
+      document.getElementById('statusText').textContent = 'Update failed';
+      console.error(err);
+      return false;
+    }
+  }
+
+  async function init() {
+    document.getElementById('search').addEventListener('input', e => {
+      state.search = e.target.value;
+      applyAndRender();
+    });
+
+    document.querySelectorAll('th[data-key]').forEach(th => {
+      th.addEventListener('click', () => {
+        const key = th.dataset.key;
+        if (state.sortKey === key) {
+          state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+        } else {
+          state.sortKey = key;
+          state.sortDir = NUMERIC_COLS.has(key) ? 'desc' : 'asc';
+        }
+        updateSortIndicators();
+        applyAndRender();
+      });
+    });
+
+    // Кнопка "Refresh" просто перечитывает уже собранный
+    // output/current_menu.json (статический файл, обновляемый раз в час
+    // отдельным процессом) — это не запускает новый сбор данных с
+    // Untappd, поэтому безопасно при любом количестве кликов и
+    // пользователей. Кулдаун ниже — только чтобы не дёргать запрос
+    // быстрее, чем успевает прийти ответ.
+    const refreshBtn = document.getElementById('refreshBtn');
+    let refreshLocked = false;
+    refreshBtn.addEventListener('click', async () => {
+      if (refreshLocked) return;
+      refreshLocked = true;
+      refreshBtn.disabled = true;
+      refreshBtn.classList.add('spinning');
+      await loadData();
+      refreshBtn.classList.remove('spinning');
+      setTimeout(() => {
+        refreshBtn.disabled = false;
+        refreshLocked = false;
+      }, 3000);
+    });
+
+    await loadData();
+  }
+
+  init();
+</script>
+</body>
+</html>
