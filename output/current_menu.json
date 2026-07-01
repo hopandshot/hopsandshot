@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-01T10:58:07Z",
+  "generated_at_utc": "2026-07-01T17:13:43Z",
   "venues": [
     "Bukowski Craft Beer Bar",
     "Valhalla Valencia",
@@ -21,7 +21,7 @@
       "brewery_url": "https://untappd.com/w/cerveza-rondadora/134078",
       "rating": "N/A",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -37,7 +37,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-antiga/218754",
       "rating": "3.76",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -53,7 +53,7 @@
       "brewery_url": "https://untappd.com/w/pyrene-brewing-co/435560",
       "rating": "3.79",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -69,7 +69,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-yakka/35142",
       "rating": "3.82",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -85,7 +85,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-antiga/218754",
       "rating": "3.6",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -101,7 +101,7 @@
       "brewery_url": "https://untappd.com/w/garagart/147689",
       "rating": "3.66",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -117,7 +117,7 @@
       "brewery_url": "https://untappd.com/w/zeta-beer/142574",
       "rating": "3.55",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -133,7 +133,7 @@
       "brewery_url": "https://untappd.com/w/cerveza-sanfrutos/97815",
       "rating": "3.73",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -149,7 +149,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-antiga/218754",
       "rating": "N/A",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -163,9 +163,9 @@
       "ibu": "N/A",
       "brewery": "Cerveza Tyris",
       "brewery_url": "https://untappd.com/w/cerveza-tyris/27690",
-      "rating": "3.77",
+      "rating": "3.76",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -181,7 +181,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-yakka/35142",
       "rating": "3.64",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -197,7 +197,7 @@
       "brewery_url": "https://untappd.com/w/cerveza-sanfrutos/97815",
       "rating": "3.88",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Bukowski Craft Beer Bar",
@@ -213,7 +213,7 @@
       "brewery_url": "https://untappd.com/w/garagart/147689",
       "rating": "4.08",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -229,7 +229,7 @@
       "brewery_url": "https://untappd.com/w/naparbier/25784",
       "rating": "3.45",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -245,7 +245,7 @@
       "brewery_url": "https://untappd.com/w/oso-brew-co/401674",
       "rating": "4.05",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -261,7 +261,7 @@
       "brewery_url": "https://untappd.com/w/soma-beer/232838",
       "rating": "4.2",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -275,9 +275,9 @@
       "ibu": "48",
       "brewery": "Castelló Beer Factory",
       "brewery_url": "https://untappd.com/w/castello-beer-factory/245386",
-      "rating": "3.84",
+      "rating": "3.85",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -293,7 +293,7 @@
       "brewery_url": "https://untappd.com/w/funky-fluid/407810",
       "rating": "3.83",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -309,7 +309,7 @@
       "brewery_url": "https://untappd.com/w/saez-son/434997",
       "rating": "N/A",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -325,7 +325,7 @@
       "brewery_url": "https://untappd.com/w/naparbier/25784",
       "rating": "3.65",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -341,7 +341,7 @@
       "brewery_url": "https://untappd.com/w/plzensky-prazdroj/1459",
       "rating": "3.38",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -357,7 +357,7 @@
       "brewery_url": "https://untappd.com/w/sierra-nevada-brewing-co/1142",
       "rating": "3.72",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -373,7 +373,7 @@
       "brewery_url": "https://untappd.com/w/cervezas-antiga/218754",
       "rating": "3.8",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -389,7 +389,7 @@
       "brewery_url": "https://untappd.com/w/la-zaragozana/3369",
       "rating": "2.95",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Valhalla Valencia",
@@ -405,7 +405,7 @@
       "brewery_url": "https://untappd.com/w/moritz/2618",
       "rating": "3.23",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -421,7 +421,7 @@
       "brewery_url": "https://untappd.com/w/cyclic-beer-farm/282596",
       "rating": "3.69",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -437,7 +437,7 @@
       "brewery_url": "https://untappd.com/w/cyclic-beer-farm/282596",
       "rating": "3.85",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -453,7 +453,7 @@
       "brewery_url": "https://untappd.com/w/doskiwis/305707",
       "rating": "3.63",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -469,7 +469,7 @@
       "brewery_url": "https://untappd.com/w/dougall-s/25244",
       "rating": "3.9",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -485,7 +485,7 @@
       "brewery_url": "https://untappd.com/w/doskiwis/305707",
       "rating": "3.66",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -501,7 +501,7 @@
       "brewery_url": "https://untappd.com/w/cerveza-tyris/27690",
       "rating": "3.24",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -517,7 +517,7 @@
       "brewery_url": "https://untappd.com/w/doskiwis/305707",
       "rating": "3.79",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -533,7 +533,7 @@
       "brewery_url": "https://untappd.com/w/dougall-s/25244",
       "rating": "3.73",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -549,7 +549,7 @@
       "brewery_url": "https://untappd.com/w/cerveza-destino/560408",
       "rating": "3.73",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -565,7 +565,7 @@
       "brewery_url": "https://untappd.com/w/doskiwis/305707",
       "rating": "3.87",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -581,7 +581,7 @@
       "brewery_url": "https://untappd.com/w/factory-brewing/531575",
       "rating": "4.28",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "Olhöps Craft Beer House",
@@ -597,7 +597,7 @@
       "brewery_url": "https://untappd.com/w/founders-brewing-co/549",
       "rating": "3.86",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -613,7 +613,7 @@
       "brewery_url": "https://untappd.com/w/saez-son/434997",
       "rating": "4.11",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -629,7 +629,7 @@
       "brewery_url": "https://untappd.com/w/naparbier/25784",
       "rating": "3.65",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -645,7 +645,7 @@
       "brewery_url": "https://untappd.com/w/soma-beer/232838",
       "rating": "3.84",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -661,7 +661,7 @@
       "brewery_url": "https://untappd.com/w/laugar-brewery/34744",
       "rating": "3.75",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -677,7 +677,7 @@
       "brewery_url": "https://untappd.com/w/garage-beer-co/182609",
       "rating": "3.61",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -693,7 +693,7 @@
       "brewery_url": "https://untappd.com/w/caleya/38053",
       "rating": "3.23",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -709,7 +709,7 @@
       "brewery_url": "https://untappd.com/w/drunken-bros/62181",
       "rating": "3.76",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -723,9 +723,9 @@
       "ibu": "27",
       "brewery": "Castelló Beer Factory",
       "brewery_url": "https://untappd.com/w/castello-beer-factory/245386",
-      "rating": "3.83",
+      "rating": "3.84",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -741,7 +741,7 @@
       "brewery_url": "https://untappd.com/w/castello-beer-factory/245386",
       "rating": "3.49",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     },
     {
       "venue": "The Market Craft Beer",
@@ -757,7 +757,7 @@
       "brewery_url": "https://untappd.com/w/bayerische-staatsbrauerei-weihenstephan/88",
       "rating": "3.83",
       "servings_prices": null,
-      "scraped_at_utc": "2026-07-01T10:58:07Z"
+      "scraped_at_utc": "2026-07-01T17:13:43Z"
     }
   ]
 }
