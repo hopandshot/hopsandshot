@@ -159,6 +159,10 @@
     margin-bottom: 20px;
   }
 
+  .controls-secondary {
+    margin-top: -12px;
+  }
+
   #search {
     flex: 1 1 240px;
     background: var(--surface);
@@ -301,6 +305,13 @@
     color: var(--badge-color);
     border: 1px solid color-mix(in srgb, var(--badge-color) 45%, transparent);
     white-space: nowrap;
+  }
+
+  .serving-icon {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 0.85rem;
+    vertical-align: middle;
   }
 
   .brewery-link {
@@ -518,6 +529,10 @@
     <div class="venue-filters" id="venueFilters"></div>
   </div>
 
+  <div class="controls controls-secondary">
+    <div class="venue-filters" id="servingFilters"></div>
+  </div>
+
   <div class="sort-chips">
     <span class="sort-label">Sort</span>
     <div class="sort-chips-row" id="sortChips"></div>
@@ -561,6 +576,7 @@
     sortDir: 'asc',
     search: '',
     venue: 'all',
+    servingType: 'all',
   };
 
   const venueColorMap = new Map();
@@ -676,6 +692,42 @@
     });
   }
 
+  const SERVING_TYPE_LABELS = { 'Draft': 'On Tap', 'Bottle/Can': 'Bottle & Can' };
+
+  function buildServingFilters() {
+    const container = document.getElementById('servingFilters');
+    const wrap = container.closest('.controls-secondary');
+    const present = new Set(state.items.map(it => it.serving_type).filter(Boolean));
+
+    // Показываем фильтр только если в данных реально встречаются оба типа
+    // подачи — если у всех заведений сейчас только draft, лишний
+    // переключатель с единственным осмысленным вариантом не нужен.
+    if (present.size < 2) {
+      wrap.classList.add('hidden');
+      state.servingType = 'all';
+      container.innerHTML = '';
+      return;
+    }
+    wrap.classList.remove('hidden');
+
+    container.innerHTML = '';
+    const entries = [['all', 'All']].concat(
+      [...present].sort().map(v => [v, SERVING_TYPE_LABELS[v] || v])
+    );
+    entries.forEach(([value, label]) => {
+      const btn = document.createElement('button');
+      btn.className = 'chip' + (value === state.servingType ? ' active' : '');
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        state.servingType = value;
+        applyAndRender();
+      });
+      container.appendChild(btn);
+    });
+  }
+
   function cell(value, label, extraClass) {
     const cls = extraClass ? ` class="${extraClass}"` : '';
     return `<td data-label="${label}"${cls}>${value}</td>`;
@@ -688,8 +740,17 @@
     return cell(escapeHtml(raw), label, 'num');
   }
 
+  const SERVING_TYPE_ICON = { 'Draft': '🚰', 'Bottle/Can': '🍾' };
+
+  function servingBadge(it) {
+    const icon = SERVING_TYPE_ICON[it.serving_type];
+    if (!icon) return '';
+    return `<span class="serving-icon" title="${escapeHtml(SERVING_TYPE_LABELS[it.serving_type] || it.serving_type)}">${icon}</span>`;
+  }
+
   function mobileCard(it, vColor) {
     const tags = `<span class="badge" style="--badge-color:${vColor}">${escapeHtml(it.venue)}</span>` +
+      servingBadge(it) +
       (it.category ? `<span class="mc-tap">${escapeHtml(it.category)}</span>` : '');
 
     const metaParts = [];
@@ -740,6 +801,7 @@
 
       const venueCell = cell(
         `<span class="badge" style="--badge-color:${vColor}">${escapeHtml(it.venue)}</span>` +
+        servingBadge(it) +
         (it.category ? `<div class="tap" style="margin-top:4px;">${escapeHtml(it.category)}</div>` : ''),
         'Venue'
       );
@@ -778,6 +840,7 @@
     const search = state.search.trim().toLowerCase();
     let items = state.items.filter(it => {
       if (state.venue !== 'all' && it.venue !== state.venue) return false;
+      if (state.servingType !== 'all' && it.serving_type !== state.servingType) return false;
       if (search) {
         const hay = [it.venue, it.beer_name, it.style, it.brewery, it.category, it.servings_prices]
           .filter(Boolean).join(' ').toLowerCase();
@@ -839,6 +902,7 @@
 
       statusEl.classList.remove('error');
       buildVenueFilters();
+      buildServingFilters();
       formatStatus(data.generated_at_utc);
       updateSortIndicators();
       applyAndRender();

@@ -37,9 +37,9 @@ HISTORY_CSV = os.path.join(OUTPUT_DIR, 'menu_history.csv')
 CURRENT_JSON = os.path.join(OUTPUT_DIR, 'current_menu.json')
 
 FIELDNAMES = [
-    'scraped_at_utc', 'venue', 'category', 'beer_name', 'style',
-    'brewery', 'abv', 'ibu', 'rating', 'servings_prices',
-    'beer_url', 'brewery_url', 'beer_id', 'venue_url',
+    'scraped_at_utc', 'venue', 'section', 'category', 'serving_type',
+    'beer_name', 'style', 'brewery', 'abv', 'ibu', 'rating',
+    'servings_prices', 'beer_url', 'brewery_url', 'beer_id', 'venue_url',
 ]
 
 HEADERS = {

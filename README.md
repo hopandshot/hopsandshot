@@ -31,10 +31,15 @@ python3 scraper.py
 
 После запуска появится `output/current_menu.csv` со столбцами:
 
-`scraped_at_utc, venue, category, beer_name, style, brewery, abv, ibu, rating, servings_prices, beer_url, brewery_url, beer_id, venue_url`
+`scraped_at_utc, venue, section, category, serving_type, beer_name, style, brewery, abv, ibu, rating, servings_prices, beer_url, brewery_url, beer_id, venue_url`
 
-`category` — это название секции/крана на странице (например, `GRIFO 1`
-у Bukowski или `Tenemos pinchado` у Valhalla).
+`section` — верхнеуровневая группа меню на странице (например,
+`DRAFT BEER/PIZARRA` или `Botellas y Latas`), `category` — конкретный
+кран/подгруппа внутри неё (например, `GRIFO 1` у Bukowski или
+`Tenemos pinchado` у Valhalla). `serving_type` — `Draft` или
+`Bottle/Can`, определяется по ключевым словам в `section`/`category`; если
+определить не удалось — остаётся пустым (в UI такие позиции просто не
+участвуют в фильтре по типу подачи).
 `servings_prices` — варианты подачи и цены, если Untappd их показывает
 (например, `Teku: 5.00 EUR; Pint: 7.00 EUR`).
 
@@ -44,8 +49,11 @@ python3 scraper.py
 файле), которая загружает `output/current_menu.json` и показывает
 таблицу: заведение, пиво, стиль, пивоварня, ABV, IBU, рейтинг, цены и
 ссылка на Untappd. Клик по заголовку столбца сортирует (повторный клик —
-меняет порядок), есть поиск и фильтр по заведению, на телефоне таблица
-превращается в карточки.
+меняет порядок), есть поиск, фильтр по заведению и фильтр по типу подачи
+(On Tap / Bottle & Can) — последний появляется в UI автоматически, только
+если в собранных данных реально встречаются оба варианта. На телефоне
+таблица превращается в карточки, а сортировка доступна через ряд чипов
+"Sort".
 
 Локальный просмотр (нужен Python, JSON не загрузится при открытии файла
 напрямую через file:// из-за CORS):

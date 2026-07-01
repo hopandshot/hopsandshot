@@ -21,6 +21,21 @@ ITEM_HEADER_RE = re.compile(r'^(.+?)\s*\(\s*\d+\s*items?\s*\)\s*$', re.IGNORECAS
 PRICE_LINE_RE = re.compile(r'^\s*([\d]+(?:[.,]\d{1,2})?)\s*(?:EUR|€)\s*$', re.IGNORECASE)
 PRICE_WITH_LABEL_RE = re.compile(r'^(.+?)\s+([\d]+(?:[.,]\d{1,2})?)\s*(?:EUR|€)\s*$', re.IGNORECASE)
 
+# Untappd группирует позиции меню на два уровня: "секция" (h2/h3/h4 без
+# счётчика количества, например "DRAFT BEER/PIZARRA" или "Botellas y
+# Latas") и "категория" внутри неё (h5/h6 со счётчиком "(N Items)",
+# например "GRIFO 1"). Тип подачи определяем по ключевым словам в тексте
+# секции/категории — испанский и английский варианты сразу, так как
+# заведения в Валенсии смешивают языки на странице.
+BOTTLE_CAN_KEYWORDS_RE = re.compile(
+    r'\b(bottle|can|botella|lata|latas|botellin|nevera|fridge|packaged)\b',
+    re.IGNORECASE,
+)
+DRAFT_KEYWORDS_RE = re.compile(
+    r'\b(draft|tap|barril|grifo|grifos|pizarra|keg|on\s*tap|pinchad\w*)\b',
+    re.IGNORECASE,
+)
+
 
 def normalize_ws(s):
     """Сжимает любые пробельные символы (включая переводы строк и
@@ -120,6 +135,19 @@ def extract_prices(container):
     return '; '.join(prices) if prices else None
 
 
+def infer_serving_type(section, category):
+    """Определяет тип подачи ('Draft' или 'Bottle/Can') по ключевым словам
+    в названии секции/категории. Если ни один паттерн не совпал —
+    возвращает None (тип неизвестен, чаще всего это и есть draft, но
+    лучше не гадать и показать пусто, чем ошибиться)."""
+    text = f"{section or ''} {category or ''}"
+    if BOTTLE_CAN_KEYWORDS_RE.search(text):
+        return 'Bottle/Can'
+    if DRAFT_KEYWORDS_RE.search(text):
+        return 'Draft'
+    return None
+
+
 def find_container(a_tag, max_levels=6):
     """Поднимается по родителям от ссылки на пиво, пока не найдёт блок,
     в тексте которого есть и 'ABV', и 'IBU' — это и есть карточка напитка."""
@@ -138,10 +166,21 @@ def parse_menu(html, venue_name, venue_url):
     """Возвращает список словарей — по одной записи на позицию в меню."""
     soup = BeautifulSoup(html, 'html.parser')
     rows = []
+    current_section = None
     current_category = None
     seen = set()
 
     for tag in soup.find_all(True):
+        # --- заголовок секции меню, например "DRAFT BEER/PIZARRA" или
+        #     "Botellas y Latas" — верхний уровень группировки, без счётчика
+        #     "(N Items)" (в отличие от заголовка категории/крана ниже) ---
+        if tag.name in ('h2', 'h3', 'h4'):
+            if tag.find('a', href=BEER_LINK_RE) is None:
+                own_text = normalize_ws(tag.get_text(' ', strip=True))
+                if own_text and len(own_text) < 80 and not ITEM_HEADER_RE.match(own_text):
+                    current_section = own_text
+                    continue
+
         # --- заголовок категории/крана, например "GRIFO 1 (1 Item)" ---
         if tag.name in ('h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'li', 'span'):
             if tag.find('a', href=BEER_LINK_RE) is None:
@@ -189,11 +228,14 @@ def parse_menu(html, venue_name, venue_url):
 
             prices = extract_prices(container)
             beer_id = href.rstrip('/').rsplit('/', 1)[-1]
+            serving_type = infer_serving_type(current_section, current_category)
 
             rows.append({
                 'venue': venue_name,
                 'venue_url': venue_url,
+                'section': current_section,
                 'category': current_category,
+                'serving_type': serving_type,
                 'beer_name': beer_name,
                 'beer_url': 'https://untappd.com' + href,
                 'beer_id': beer_id,
