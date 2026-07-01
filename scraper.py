@@ -26,7 +26,7 @@ from datetime import datetime, timezone
 
 import cloudscraper
 
-from parser import parse_menu
+from parser import parse_menu, list_menu_tabs, is_food_menu_label
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 VENUES_FILE = os.path.join(BASE_DIR, 'venues.json')
@@ -100,6 +100,9 @@ def main():
     for venue in venues:
         name = venue['name']
         url = venue['url']
+        safe_name = name.lower().replace(' ', '_')
+        venue_rows = []
+
         print(f'[{name}] загрузка {url} ...')
         try:
             html = fetch_html(scraper, url)
@@ -108,7 +111,6 @@ def main():
             continue
 
         if debug:
-            safe_name = name.lower().replace(' ', '_')
             debug_path = os.path.join(DEBUG_DIR, f'{safe_name}.html')
             with open(debug_path, 'w', encoding='utf-8') as f:
                 f.write(html)
@@ -121,12 +123,57 @@ def main():
             continue
 
         print(f'[{name}] найдено позиций меню: {len(rows)}')
-        for r in rows:
+        venue_rows.extend(rows)
+        active_section = rows[0]['section'] if rows else None
+
+        # На странице может быть несколько вкладок меню (Draft / Bottle-Can
+        # / Food) — обычная загрузка отдаёт только активную. Остальные
+        # непищевые вкладки пробуем дозапросить напрямую через
+        # ?menu_id=<id>. Это экспериментальный приём (см. README) — если
+        # Untappd не поддерживает такой параметр без JS, соответствующий
+        # запрос просто не даст новых позиций и будет тихо пропущен.
+        try:
+            tabs = list_menu_tabs(html)
+        except Exception as e:
+            print(f'[{name}] не удалось получить список вкладок меню: {e}', file=sys.stderr)
+            tabs = []
+
+        for tab in tabs:
+            if is_food_menu_label(tab['label']):
+                continue
+            if tab['label'] == active_section:
+                continue  # это меню уже получили в основном запросе
+
+            tab_url = f"{url}?menu_id={tab['menu_id']}"
+            print(f'[{name}] пробую доп. вкладку "{tab["label"]}" ({tab_url}) ...')
+            time.sleep(2)
+            try:
+                tab_html = fetch_html(scraper, tab_url)
+            except Exception as e:
+                print(f'[{name}] ОШИБКА загрузки вкладки "{tab["label"]}": {e}', file=sys.stderr)
+                continue
+
+            if debug:
+                tab_debug_path = os.path.join(DEBUG_DIR, f"{safe_name}__menu_{tab['menu_id']}.html")
+                with open(tab_debug_path, 'w', encoding='utf-8') as f:
+                    f.write(tab_html)
+                print(f'[{name}] сырой HTML вкладки сохранён в {tab_debug_path}')
+
+            try:
+                tab_rows = parse_menu(tab_html, name, url, forced_section=tab['label'])
+            except Exception as e:
+                print(f'[{name}] ОШИБКА парсинга вкладки "{tab["label"]}": {e}', file=sys.stderr)
+                continue
+
+            print(f'[{name}] вкладка "{tab["label"]}": найдено позиций {len(tab_rows)}')
+            venue_rows.extend(tab_rows)
+
+        for r in venue_rows:
             r['scraped_at_utc'] = timestamp
             all_rows.append(r)
         venue_names.append(name)
 
-        time.sleep(2)  # вежливая пауза между запросами
+        time.sleep(2)  # вежливая пауза между запросами к разным заведениям
 
     if not all_rows:
         print('Ни одной позиции меню не найдено — CSV не обновлён.', file=sys.stderr)

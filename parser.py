@@ -21,12 +21,10 @@ ITEM_HEADER_RE = re.compile(r'^(.+?)\s*\(\s*\d+\s*items?\s*\)\s*$', re.IGNORECAS
 PRICE_LINE_RE = re.compile(r'^\s*([\d]+(?:[.,]\d{1,2})?)\s*(?:EUR|€)\s*$', re.IGNORECASE)
 PRICE_WITH_LABEL_RE = re.compile(r'^(.+?)\s+([\d]+(?:[.,]\d{1,2})?)\s*(?:EUR|€)\s*$', re.IGNORECASE)
 
-# Untappd группирует позиции меню на два уровня: "секция" (h2/h3/h4 без
-# счётчика количества, например "DRAFT BEER/PIZARRA" или "Botellas y
-# Latas") и "категория" внутри неё (h5/h6 со счётчиком "(N Items)",
-# например "GRIFO 1"). Тип подачи определяем по ключевым словам в тексте
-# секции/категории — испанский и английский варианты сразу, так как
-# заведения в Валенсии смешивают языки на странице.
+# Тип подачи (Draft / Bottle-Can) определяем по ключевым словам в названии
+# секции меню (section) и категории/крана (category) — испанский и
+# английский варианты сразу, так как заведения в Валенсии смешивают языки
+# на странице.
 BOTTLE_CAN_KEYWORDS_RE = re.compile(
     r'\b(bottle|can|botella|lata|latas|botellin|nevera|fridge|packaged)\b',
     re.IGNORECASE,
@@ -35,6 +33,14 @@ DRAFT_KEYWORDS_RE = re.compile(
     r'\b(draft|tap|barril|grifo|grifos|pizarra|keg|on\s*tap|pinchad\w*)\b',
     re.IGNORECASE,
 )
+
+# Пункты выпадающего списка меню (select.menu-selector), относящиеся к еде,
+# а не к напиткам — их не запрашиваем отдельно.
+FOOD_MENU_RE = re.compile(r'\b(food|comida|carta|kitchen|snack)\b', re.IGNORECASE)
+
+
+def is_food_menu_label(label):
+    return bool(FOOD_MENU_RE.search(label or ''))
 
 
 def normalize_ws(s):
@@ -148,6 +154,43 @@ def infer_serving_type(section, category):
     return None
 
 
+def extract_active_menu_label(soup):
+    """Возвращает название текущего показанного меню — Untappd рендерит
+    его не в h2-h4, а в <p class="menu-total">DRAFT BEER/PIZARRA</p>,
+    что надёжнее любых эвристик по заголовкам."""
+    tag = soup.find('p', class_='menu-total')
+    if tag is None:
+        return None
+    text = normalize_ws(tag.get_text(' ', strip=True))
+    return text or None
+
+
+def extract_menu_options(soup):
+    """Возвращает список вкладок меню заведения — Untappd рендерит их в
+    <select class="menu-selector"><option value="ID">Название</option>...
+
+    Каждый пункт — это отдельное меню (Draft / Bottles & Cans / Food...),
+    ID используется как параметр ?menu_id=ID для запроса конкретной
+    вкладки напрямую (без выполнения JS)."""
+    select = soup.find('select', class_='menu-selector')
+    if select is None:
+        return []
+    options = []
+    for opt in select.find_all('option'):
+        menu_id = opt.get('value', '').strip()
+        label = normalize_ws(opt.get_text(' ', strip=True))
+        if menu_id and label:
+            options.append({'menu_id': menu_id, 'label': label})
+    return options
+
+
+def list_menu_tabs(html):
+    """Обёртка над extract_menu_options для использования из scraper.py
+    без прямого импорта BeautifulSoup там."""
+    soup = BeautifulSoup(html, 'html.parser')
+    return extract_menu_options(soup)
+
+
 def find_container(a_tag, max_levels=6):
     """Поднимается по родителям от ссылки на пиво, пока не найдёт блок,
     в тексте которого есть и 'ABV', и 'IBU' — это и есть карточка напитка."""
@@ -162,25 +205,30 @@ def find_container(a_tag, max_levels=6):
     return a_tag.parent or a_tag
 
 
-def parse_menu(html, venue_name, venue_url):
-    """Возвращает список словарей — по одной записи на позицию в меню."""
+def parse_menu(html, venue_name, venue_url, forced_section=None):
+    """Возвращает список словарей — по одной записи на позицию в меню.
+
+    forced_section: если известно точное название вкладки меню (например,
+    полученное из <select class="menu-selector"> при отдельном запросе
+    конкретной вкладки через ?menu_id=...), передаём его сюда. Иначе
+    секция определяется из <p class="menu-total"> — единственного
+    надёжного места на странице, где Untappd явно пишет название
+    показанного меню (в отличие от произвольных h2-h4, среди которых на
+    странице полно посторонних заголовков вроде "Hours", "Photos",
+    "Recent Activity", не имеющих отношения к меню).
+
+    Секция здесь одна на весь документ: одна загруженная HTML-страница
+    Untappd показывает содержимое только ОДНОЙ активной вкладки меню
+    (Draft, либо Bottle/Can, либо Food — но не несколько сразу), поэтому
+    пересканировать её по ходу перебора тегов не нужно.
+    """
     soup = BeautifulSoup(html, 'html.parser')
     rows = []
-    current_section = None
+    section = forced_section or extract_active_menu_label(soup)
     current_category = None
     seen = set()
 
     for tag in soup.find_all(True):
-        # --- заголовок секции меню, например "DRAFT BEER/PIZARRA" или
-        #     "Botellas y Latas" — верхний уровень группировки, без счётчика
-        #     "(N Items)" (в отличие от заголовка категории/крана ниже) ---
-        if tag.name in ('h2', 'h3', 'h4'):
-            if tag.find('a', href=BEER_LINK_RE) is None:
-                own_text = normalize_ws(tag.get_text(' ', strip=True))
-                if own_text and len(own_text) < 80 and not ITEM_HEADER_RE.match(own_text):
-                    current_section = own_text
-                    continue
-
         # --- заголовок категории/крана, например "GRIFO 1 (1 Item)" ---
         if tag.name in ('h2', 'h3', 'h4', 'h5', 'h6', 'div', 'p', 'li', 'span'):
             if tag.find('a', href=BEER_LINK_RE) is None:
@@ -228,12 +276,12 @@ def parse_menu(html, venue_name, venue_url):
 
             prices = extract_prices(container)
             beer_id = href.rstrip('/').rsplit('/', 1)[-1]
-            serving_type = infer_serving_type(current_section, current_category)
+            serving_type = infer_serving_type(section, current_category)
 
             rows.append({
                 'venue': venue_name,
                 'venue_url': venue_url,
-                'section': current_section,
+                'section': section,
                 'category': current_category,
                 'serving_type': serving_type,
                 'beer_name': beer_name,
