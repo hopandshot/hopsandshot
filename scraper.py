@@ -56,10 +56,30 @@ def load_venues():
         return json.load(f)
 
 
-def fetch_html(scraper, url):
-    resp = scraper.get(url, headers=HEADERS, timeout=30)
-    resp.raise_for_status()
-    return resp.text
+def fetch_html(scraper, url, retries=2, backoff=8):
+    """Загружает страницу с повторными попытками.
+
+    Если все заведения в одном прогоне падают с 403 одновременно — это
+    почти всегда означает, что весь IP-адрес, выданный GitHub Actions
+    именно этому запуску, целиком попал под подозрение у Cloudflare, а не
+    что конкретный запрос был "неудачным". Повтор с той же сессии и того
+    же IP тогда не поможет — тут вытаскивает то, что следующий запланированный
+    запуск workflow получит от GitHub уже другой IP. Ретраи здесь на случай
+    более простых временных сбоев (таймаут, разовая ошибка сети и т.п.).
+    """
+    last_error = None
+    for attempt in range(1, retries + 2):
+        try:
+            resp = scraper.get(url, headers=HEADERS, timeout=30)
+            resp.raise_for_status()
+            return resp.text
+        except Exception as e:
+            last_error = e
+            if attempt <= retries:
+                print(f'  попытка {attempt} не удалась ({e}), '
+                      f'жду {backoff} сек. и пробую снова...', file=sys.stderr)
+                time.sleep(backoff)
+    raise last_error
 
 
 def write_csv(rows, path, mode):
