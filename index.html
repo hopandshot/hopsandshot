@@ -275,11 +275,24 @@
     font-size: 0.9rem;
   }
 
-  td.num, td.price {
+  td.num {
     font-family: var(--font-mono);
     font-size: 0.85rem;
     text-align: right;
     white-space: nowrap;
+  }
+
+  td.price {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-align: right;
+    white-space: normal;
+    max-width: 220px;
+    line-height: 1.5;
+  }
+
+  thead th[data-key="servings_prices"] {
+    max-width: 220px;
   }
 
   td.beer-cell .name {
@@ -820,7 +833,12 @@
         'Brewery'
       );
 
-      const priceCell = cell(escapeHtml(it.servings_prices) || '<span class="dash">–</span>', 'Price', 'price');
+      const priceCell = cell(
+        it.servings_prices
+          ? escapeHtml(it.servings_prices).replace(/;\s*/g, '<br>')
+          : '<span class="dash">–</span>',
+        'Price', 'price'
+      );
 
       const linkCell = cell(
         it.beer_url ? `<a class="ext-link" href="${escapeHtml(it.beer_url)}" target="_blank" rel="noopener">Open ↗</a>` : '',
