@@ -191,18 +191,49 @@ def list_menu_tabs(html):
     return extract_menu_options(soup)
 
 
-def find_container(a_tag, max_levels=6):
+def find_container(a_tag, max_levels=6, price_search_levels=3):
     """Поднимается по родителям от ссылки на пиво, пока не найдёт блок,
-    в тексте которого есть и 'ABV', и 'IBU' — это и есть карточка напитка."""
+    в тексте которого есть и 'ABV', и 'IBU' — это и есть карточка напитка
+    (название, стиль, ABV/IBU/пивоварня/рейтинг).
+
+    У Untappd блок с ценами (.beer-prices) на многих страницах — не
+    вложен внутрь этой карточки, а идёт РЯДОМ с ней, оба как дети одного
+    общего <li> (см. HTML-шаблон Untappd: <li><div class="beer-info">...
+    </div><div class="beer-prices">...</div></li>). Поэтому после того,
+    как нашли карточку с ABV/IBU, дополнительно поднимаемся ещё на
+    несколько уровней вверх в поисках предка, где ЕСТЬ упоминание цены
+    (EUR/€) — но только если в нём по-прежнему ровно одна ссылка на пиво,
+    чтобы случайно не захватить цены соседней позиции меню."""
     node = a_tag
+    stats_container = None
     for _ in range(max_levels):
         if node.parent is None:
             break
         node = node.parent
         text = node.get_text(' ', strip=True).upper()
         if 'ABV' in text and 'IBU' in text:
-            return node
-    return a_tag.parent or a_tag
+            stats_container = node
+            break
+
+    if stats_container is None:
+        return a_tag.parent or a_tag
+
+    stats_text = stats_container.get_text(' ', strip=True)
+    if 'EUR' in stats_text.upper() or '€' in stats_text:
+        return stats_container  # цена уже внутри — расширять не нужно
+
+    candidate = stats_container
+    for _ in range(price_search_levels):
+        if candidate.parent is None:
+            break
+        candidate = candidate.parent
+        candidate_text = candidate.get_text(' ', strip=True)
+        has_price = 'EUR' in candidate_text.upper() or '€' in candidate_text
+        beer_links = candidate.find_all('a', href=BEER_LINK_RE)
+        if has_price and len(beer_links) <= 1:
+            return candidate
+
+    return stats_container
 
 
 def parse_menu(html, venue_name, venue_url, forced_section=None):

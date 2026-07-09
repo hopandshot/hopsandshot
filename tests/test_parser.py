@@ -23,7 +23,7 @@ def main():
 
     # --- секция определяется из <p class="menu-total">, без forced_section ---
     draft_rows = parse_menu(draft_html, 'Test Venue', 'https://untappd.com/v/test-venue/123')
-    assert len(draft_rows) == 3, f'Ожидалось 3 позиции на draft-странице, получено {len(draft_rows)}'
+    assert len(draft_rows) == 4, f'Ожидалось 4 позиции на draft-странице, получено {len(draft_rows)}'
 
     by_name = {r['beer_name']: r for r in draft_rows}
 
@@ -34,14 +34,23 @@ def main():
     assert by_name['Tostada']['ibu'] == 'N/A'
     assert by_name['Tostada']['brewery'] == 'Cervezas Antiga'
     assert by_name['Tostada']['rating'] == 'N/A'
+    assert by_name['Tostada']['servings_prices'] is None
 
     assert by_name['Barbaritat']['style'] == 'IPA - American'
     assert by_name['Barbaritat']['ibu'] == '63'
     assert by_name['Barbaritat']['rating'] == '3.83'
     assert by_name['Barbaritat']['serving_type'] == 'Draft'
 
+    # цена рендерится в <div class="beer-prices">, которая является
+    # СОСЕДОМ блока с ABV/IBU (оба — дети одного <li>), а не вложена в
+    # него — именно эту реальную структуру Untappd и должен обработать
+    # find_container()
     assert by_name['1. 499']['category'] == 'GRIFO 11'
     assert by_name['1. 499']['servings_prices'] == 'Teku: 5.00 EUR; Pint: 7.00 EUR'
+
+    # у соседней позиции без блока цен ничего не должно "протечь"
+    assert by_name['Other Beer']['category'] == 'GRIFO 12'
+    assert by_name['Other Beer']['servings_prices'] is None
 
     # ни одна позиция с draft-страницы не должна была подхватить служебный
     # заголовок навигации "All Menus" как секцию
